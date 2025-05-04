@@ -1,35 +1,39 @@
 import { useState } from 'react';
 import { Box, TextField, Button, Typography } from '@mui/material';
 
-export default function LoginPage() {
+export default function SignupPage() {
   const [email, setEmail] = useState('');
+  const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
   const [error, setError] = useState('');
 
-  const handleLogin = () => {
-    if (!email || !password) {
+  const handleSignup = () => {
+    if (!email || !username || !password) {
       setError('Please fill in all fields.');
       return;
     }
+
     setError('');
-    // TODO: call login API e.g. axios.post(...)
-    console.log('Logging in with:', email, password);
+    // TODO: call signup API
+    console.log('Signing up with:', { email, username, password });
   };
 
   return (
     <Box
-      maxWidth={400}
-      mx="auto"
-      mt={10}
-      p={4}
-      borderRadius={2}
-      boxShadow={3}
-      display="flex"
-      flexDirection="column"
-      gap={2}
+      sx={{
+        width: '100%',
+        maxWidth: 400,
+        p: 4,
+        bgcolor: 'white',
+        borderRadius: 2,
+        boxShadow: 3,
+        display: 'flex',
+        flexDirection: 'column',
+        gap: 2,
+      }}
     >
-      <Typography variant="h5" textAlign="center" fontWeight="bold">
-        Login
+      <Typography variant="h5" fontWeight="bold" textAlign="center">
+        Sign Up
       </Typography>
 
       <TextField
@@ -40,7 +44,13 @@ export default function LoginPage() {
         required
         fullWidth
       />
-
+      <TextField
+        label="Username"
+        value={username}
+        onChange={(e) => setUsername(e.target.value)}
+        required
+        fullWidth
+      />
       <TextField
         label="Password"
         type="password"
@@ -56,8 +66,8 @@ export default function LoginPage() {
         </Typography>
       )}
 
-      <Button variant="contained" onClick={handleLogin} fullWidth>
-        Log In
+      <Button variant="contained" onClick={handleSignup} fullWidth>
+        Sign Up
       </Button>
     </Box>
   );
