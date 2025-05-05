@@ -8,10 +8,17 @@ export default function LoginWrapper({ children }: { children: React.ReactNode }
         display: 'grid',
         alignItems: 'center',
         justifyContent: 'center',
-        backgroundColor: '#f9f9f9',
+        px: 2,
       }}
     >
-      {children}
+      <Box
+        sx={{
+          width: '100%',
+          maxWidth: 400,
+        }}
+      >
+        {children}
+      </Box>
     </Box>
   );
 }
