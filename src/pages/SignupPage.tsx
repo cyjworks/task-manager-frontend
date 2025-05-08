@@ -1,21 +1,28 @@
 import { useState } from 'react';
 import { Box, TextField, Button, Typography } from '@mui/material';
+import api from '../lib/axios';
+import { AxiosError } from 'axios';
 
 export default function SignupPage() {
-  const [email, setEmail] = useState('');
   const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
+  const [email, setEmail] = useState('');
   const [error, setError] = useState('');
 
-  const handleSignup = () => {
-    if (!email || !username || !password) {
+  const handleSignup = async () => {
+    if (!username || !password || !email) {
       setError('Please fill in all fields.');
       return;
     }
 
-    setError('');
-    // TODO: call signup API
-    console.log('Signing up with:', { email, username, password });
+    try {
+      setError('');
+      const response = await api.post('/signup', { username, password, email });
+      console.log('Sign up success: ', response.data);
+    } catch (err) {
+      const error = err as AxiosError<{ message: string }>;
+      setError(error.response?.data?.message || 'Sign Up failed.');
+    }
   };
 
   return (
@@ -37,14 +44,6 @@ export default function SignupPage() {
       </Typography>
 
       <TextField
-        label="Email"
-        type="email"
-        value={email}
-        onChange={(e) => setEmail(e.target.value)}
-        required
-        fullWidth
-      />
-      <TextField
         label="Username"
         value={username}
         onChange={(e) => setUsername(e.target.value)}
@@ -56,6 +55,14 @@ export default function SignupPage() {
         type="password"
         value={password}
         onChange={(e) => setPassword(e.target.value)}
+        required
+        fullWidth
+      />
+      <TextField
+        label="Email"
+        type="email"
+        value={email}
+        onChange={(e) => setEmail(e.target.value)}
         required
         fullWidth
       />

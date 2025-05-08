@@ -13,12 +13,11 @@ export default function LoginPage() {
       setError('Please fill in all fields.');
       return;
     }
-    console.log('check: ', username)
 
     try {
       setError('');
       const response = await api.post('/login', { username, password });
-      console.log('Login success:', response.data);
+      console.log('Login success: ', response.data);
       // TODO: redirect or save user/token
     } catch (err) {
       const error = err as AxiosError<{ message: string }>;
