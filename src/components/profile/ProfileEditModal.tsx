@@ -8,14 +8,17 @@ import {
   Box,
   Avatar,
   IconButton,
+  Typography,
 } from '@mui/material';
 import EditIcon from '@mui/icons-material/Edit';
 import { useState } from 'react';
+import api from '../../lib/axios';
+import { AxiosError } from 'axios';
 
 interface ProfileEditModalProps {
   open: boolean;
   onClose: () => void;
-  onSave: (profile: { fullName: string; email: string }) => void;
+  onSuccess: () => void;
   initialProfile: {
     fullName: string;
     email: string;
@@ -27,28 +30,53 @@ interface ProfileEditModalProps {
 export default function ProfileEditModal({
   open,
   onClose,
-  onSave,
+  onSuccess,
   initialProfile,
 }: ProfileEditModalProps) {
   const [fullName, setFullName] = useState(initialProfile.fullName);
   const [email, setEmail] = useState(initialProfile.email);
   const [bio, setBio] = useState(initialProfile.bio);
+  const [error, setError] = useState('');
+  const [loading, setLoading] = useState(false);
 
-  const handleSave = () => {
-    onSave({ fullName, email });
-    onClose();
+  const handleSave = async () => {
+    setLoading(true);
+    setError('');
+
+    try {
+      const username = 'cyj1'; // TODO: replace with value from localStorage or cookie
+      await api.put('/me', {
+        fullName,
+        email,
+        bio,
+      }, {
+        params: { username: username }
+      });
+
+      onSuccess(); // Notify parent to refresh data
+    } catch (err) {
+      const axiosError = err as AxiosError<{ message: string }>;
+      setError(
+        axiosError.response?.data?.message || 'Failed to update profile.'
+      );
+    } finally {
+      setLoading(false);
+    }
   };
 
   return (
     <Dialog open={open} onClose={onClose} fullWidth maxWidth="sm">
       <DialogTitle>Edit Profile</DialogTitle>
       <DialogContent>
-        <Box display="flex" flexDirection="column" alignItems="center" gap={2} mt={2}>
-          <Avatar
-            src={initialProfile.avatarUrl}
-            sx={{ width: 80, height: 80 }}
-          />
-          <IconButton size="small">
+        <Box
+          display="flex"
+          flexDirection="column"
+          alignItems="center"
+          gap={2}
+          mt={2}
+        >
+          <Avatar src={initialProfile.avatarUrl} sx={{ width: 80, height: 80 }} />
+          <IconButton size="small" aria-label="change avatar">
             <EditIcon fontSize="small" />
           </IconButton>
         </Box>
@@ -69,15 +97,31 @@ export default function ProfileEditModal({
           <TextField
             label="Bio"
             fullWidth
+            multiline
+            rows={3}
             value={bio}
             onChange={(e) => setBio(e.target.value)}
           />
         </Box>
+
+        {error && (
+          <Typography color="error" mt={2}>
+            {error}
+          </Typography>
+        )}
       </DialogContent>
 
       <DialogActions>
-        <Button onClick={onClose}>Cancel</Button>
-        <Button onClick={handleSave} variant="contained">Save</Button>
+        <Button onClick={onClose} disabled={loading}>
+          Cancel
+        </Button>
+        <Button
+          onClick={handleSave}
+          variant="contained"
+          disabled={loading}
+        >
+          Save
+        </Button>
       </DialogActions>
     </Dialog>
   );

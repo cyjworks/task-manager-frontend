@@ -1,5 +1,12 @@
 import { useEffect, useState } from 'react';
-import { Box, Avatar, Typography, Button, Divider, CircularProgress } from '@mui/material';
+import {
+  Box,
+  Avatar,
+  Typography,
+  Button,
+  Divider,
+  CircularProgress,
+} from '@mui/material';
 import api from '../lib/axios';
 import { AxiosError } from 'axios';
 import ProfileEditModal from '../components/profile/ProfileEditModal';
@@ -18,23 +25,24 @@ export default function ProfilePage() {
   const [loading, setLoading] = useState(true);
   const [editOpen, setEditOpen] = useState(false);
 
-  useEffect(() => {
-    const fetchUser = async () => {
-      try {
-        // TODO: replace with value from localStorage or cookie
-        const username = 'cyj1';
-        const res = await api.get('/me', {
-          params: { username }
-        });
-        setUser(res.data.data);
-      } catch (err) {
-        const axiosError = err as AxiosError<{ message: string }>;
-        setError(axiosError.response?.data?.message || 'Failed to load user data.');
-      } finally {
-        setLoading(false);
-      }
-    };
+  const fetchUser = async () => {
+    try {
+      const username = 'cyj1'; // TODO: replace with value from localStorage or cookie
+      const res = await api.get('/me', {
+        params: { username },
+      });
+      setUser(res.data.data);
+    } catch (err) {
+      const axiosError = err as AxiosError<{ message: string }>;
+      setError(
+        axiosError.response?.data?.message || 'Failed to load user data.'
+      );
+    } finally {
+      setLoading(false);
+    }
+  };
 
+  useEffect(() => {
     fetchUser();
   }, []);
 
@@ -107,11 +115,9 @@ export default function ProfilePage() {
       <ProfileEditModal
         open={editOpen}
         onClose={() => setEditOpen(false)}
-        onSave={(updated) => {
-          setUser((prev) =>
-            prev ? { ...prev, ...updated } : prev
-          );
+        onSuccess={() => {
           setEditOpen(false);
+          fetchUser(); // Refresh profile data after successful update
         }}
         initialProfile={{
           fullName: user.fullName,
