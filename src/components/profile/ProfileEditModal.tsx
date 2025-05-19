@@ -44,13 +44,10 @@ export default function ProfileEditModal({
     setError('');
 
     try {
-      const username = 'cyj1'; // TODO: replace with value from localStorage or cookie
       await api.put('/me', {
         fullName,
         email,
         bio,
-      }, {
-        params: { username: username }
       });
 
       onSuccess(); // Notify parent to refresh data

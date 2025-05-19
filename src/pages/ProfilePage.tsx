@@ -27,10 +27,7 @@ export default function ProfilePage() {
 
   const fetchUser = async () => {
     try {
-      const username = 'cyj1'; // TODO: replace with value from localStorage or cookie
-      const res = await api.get('/me', {
-        params: { username },
-      });
+      const res = await api.get('/me');
       setUser(res.data.data);
     } catch (err) {
       const axiosError = err as AxiosError<{ message: string }>;
