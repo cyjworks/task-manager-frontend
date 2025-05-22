@@ -1,5 +1,6 @@
 import { useState } from 'react';
 import { Box, TextField, Button, Typography } from '@mui/material';
+import { useNavigate } from 'react-router-dom';
 import api from '../lib/axios';
 import { AxiosError } from 'axios';
 
@@ -7,6 +8,7 @@ export default function LoginPage() {
   const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
   const [error, setError] = useState('');
+  const navigate = useNavigate();
 
   const handleLogin = async () => {
     if (!username || !password) {
@@ -18,6 +20,7 @@ export default function LoginPage() {
       setError('');
       const response = await api.post('/login', { username, password });
       console.log('Login success: ', response.data);
+      navigate('/');
       // TODO: redirect or save user/token
     } catch (err) {
       const error = err as AxiosError<{ message: string }>;
