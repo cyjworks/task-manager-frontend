@@ -1,5 +1,5 @@
-import { AppBar, Toolbar, Box, Button } from '@mui/material';
-import { useNavigate } from 'react-router-dom';
+import { AppBar, Toolbar, Button, Typography } from '@mui/material';
+import { useNavigate, Link as RouterLink } from 'react-router-dom';
 import { logout } from '../../services/authService';
 
 export default function Header() {
@@ -13,8 +13,16 @@ export default function Header() {
   return (
     <AppBar position="static">
       <Toolbar>
-        <Box flexGrow={1}>My App</Box>
-        <Button color="inherit" onClick={handleLogout}>
+        <Typography
+          component={RouterLink}
+          to="/"
+          variant="h6"
+          sx={{ flexGrow: 1, textDecoration: 'none', color: 'inherit' }}
+        >
+          My App
+        </Typography>
+
+        <Button color="inherit" onClick={handleLogout} aria-label="Logout">
           Logout
         </Button>
       </Toolbar>
